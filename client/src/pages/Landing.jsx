@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { School, Users, BookOpen, CreditCard, MessageSquare, FileText, Shield, Globe, CheckCircle, Github, ExternalLink } from 'lucide-react';
+import { School, Users, BookOpen, CreditCard, MessageSquare, FileText, Shield, Globe, CheckCircle, ExternalLink } from 'lucide-react';
 
 const features = [
   { icon: Users, title: 'Multi-role logins', desc: 'Admin, Teacher, Student & Parent each get their own dashboard' },
@@ -30,8 +30,8 @@ export default function Landing() {
             <span className="font-bold text-gray-900">EduManage SL</span>
           </div>
           <div className="flex items-center gap-3">
-            <a href="https://github.com/musamansaray90946" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-gray-900">
-              <Github className="w-5 h-5" />
+            <a href="https://github.com/musamansaray90946" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-gray-900 text-sm font-medium">
+              GitHub
             </a>
             <button onClick={() => navigate('/login')} className="btn-primary">Sign In</button>
           </div>
@@ -120,8 +120,8 @@ export default function Landing() {
             </div>
             <div className="flex flex-col gap-2 text-sm text-gray-400 text-right">
               <a href="mailto:mmans.sl.001@gmail.com" className="hover:text-white transition-colors">mmans.sl.001@gmail.com</a>
-              <a href="https://github.com/musamansaray90946" target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1 justify-end">
-                <Github className="w-4 h-4" /> github.com/musamansaray90946
+              <a href="https://github.com/musamansaray90946" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+                github.com/musamansaray90946
               </a>
               <a href="https://musamansaray90946.github.io/portfolio-v2" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">Portfolio</a>
             </div>
