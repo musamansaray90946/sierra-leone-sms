@@ -17,7 +17,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'https://sierra-leone-sms.vercel.app',
+    'https://sierra-leone-65u8li3c5-musamansaray90946s-projects.vercel.app'
+  ],
   credentials: true
 }));
 app.use(express.json());
