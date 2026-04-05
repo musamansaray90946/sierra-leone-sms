@@ -7,22 +7,23 @@ import {
 } from 'lucide-react';
 
 const allNavItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', exact: true, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT','PARENT'] },
-  { to: '/dashboard/schools', icon: Building, label: 'Schools', exact: false, roles: ['SUPER_ADMIN'] },
-  { to: '/dashboard/students', icon: Users, label: 'Students', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER'] },
-  { to: '/dashboard/teachers', icon: GraduationCap, label: 'Teachers', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL'] },
-  { to: '/dashboard/classes', icon: BookOpen, label: 'Classes', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER'] },
-  { to: '/dashboard/attendance', icon: ClipboardList, label: 'Attendance', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER'] },
-  { to: '/dashboard/lessons', icon: BookMarked, label: 'Lesson Notes', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','TEACHER','STUDENT'] },
-  { to: '/dashboard/assignments', icon: PenTool, label: 'Assignments', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','TEACHER','STUDENT'] },
-  { to: '/dashboard/exams', icon: FileText, label: 'Exams & Results', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT'] },
-  { to: '/dashboard/fees', icon: CreditCard, label: 'Fees (SLL)', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL','PARENT'] },
-  { to: '/dashboard/announcements', icon: Megaphone, label: 'Announcements', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT','PARENT'] },
-  { to: '/dashboard/profile', icon: User, label: 'My Profile', exact: false, roles: ['SUPER_ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT','PARENT'] },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', exact: true, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT','PARENT'] },
+  { to: '/dashboard/schools', icon: Building, label: 'Schools', exact: false, roles: ['SUPER_ADMIN','ADMIN'] },
+  { to: '/dashboard/students', icon: Users, label: 'Students', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER'] },
+  { to: '/dashboard/teachers', icon: GraduationCap, label: 'Teachers', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL'] },
+  { to: '/dashboard/classes', icon: BookOpen, label: 'Classes', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER'] },
+  { to: '/dashboard/attendance', icon: ClipboardList, label: 'Attendance', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER'] },
+  { to: '/dashboard/lessons', icon: BookMarked, label: 'Lesson Notes', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','TEACHER','STUDENT'] },
+  { to: '/dashboard/assignments', icon: PenTool, label: 'Assignments', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','TEACHER','STUDENT'] },
+  { to: '/dashboard/exams', icon: FileText, label: 'Exams & Results', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT'] },
+  { to: '/dashboard/fees', icon: CreditCard, label: 'Fees (SLL)', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','PARENT'] },
+  { to: '/dashboard/announcements', icon: Megaphone, label: 'Announcements', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT','PARENT'] },
+  { to: '/dashboard/profile', icon: User, label: 'My Profile', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT','PARENT'] },
 ];
 
 const roleColors = {
   SUPER_ADMIN: 'bg-purple-500',
+  ADMIN: 'bg-primary-500',
   SCHOOL_ADMIN: 'bg-primary-500',
   PRINCIPAL: 'bg-green-600',
   TEACHER: 'bg-blue-500',
@@ -32,6 +33,7 @@ const roleColors = {
 
 const roleLabels = {
   SUPER_ADMIN: 'Super Admin',
+  ADMIN: 'Admin',
   SCHOOL_ADMIN: 'School Admin',
   PRINCIPAL: 'Principal',
   TEACHER: 'Teacher',
@@ -60,8 +62,8 @@ export default function Sidebar() {
 
       <div className="px-3 py-3 border-b border-gray-100">
         <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
-          <div className={`w-2 h-2 rounded-full ${roleColors[role]}`}></div>
-          <span className="text-xs font-medium text-gray-700">{roleLabels[role]}</span>
+          <div className={`w-2 h-2 rounded-full ${roleColors[role] || 'bg-gray-500'}`}></div>
+          <span className="text-xs font-medium text-gray-700">{roleLabels[role] || role}</span>
         </div>
       </div>
 
