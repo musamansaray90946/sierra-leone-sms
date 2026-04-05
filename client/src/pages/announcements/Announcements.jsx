@@ -27,11 +27,12 @@ export default function Announcements() {
       await API.post('/announcements', form);
       toast.success(form.sendSMS ? 'Announcement sent + SMS to parents!' : 'Announcement published!');
       setShowForm(false);
+      setForm({ title: '', message: '', schoolId: 'school-001', sendSMS: false });
       fetchAnnouncements();
     } catch (err) { toast.error(err.response?.data?.message || 'Failed'); }
   };
 
-  const canCreate = ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'PRINCIPAL'].includes(user?.role);
+  const canCreate = ['SUPER_ADMIN', 'ADMIN', 'SCHOOL_ADMIN', 'PRINCIPAL'].includes(user?.role);
 
   return (
     <div className="space-y-6">
@@ -53,11 +54,16 @@ export default function Announcements() {
           <div className="card text-center py-16">
             <Megaphone className="w-12 h-12 text-gray-200 mx-auto mb-3" />
             <p className="text-gray-400">No announcements yet</p>
+            {canCreate && (
+              <button onClick={() => setShowForm(true)} className="mt-4 btn-primary">
+                Create First Announcement
+              </button>
+            )}
           </div>
         ) : items.map(item => (
           <div key={item.id} className="card border-l-4 border-l-primary-500">
             <div className="flex items-start justify-between">
-              <div>
+              <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <Megaphone className="w-4 h-4 text-primary-600" />
                   <h3 className="font-semibold text-gray-900">{item.title}</h3>
@@ -83,8 +89,14 @@ export default function Announcements() {
           <div className="bg-white rounded-2xl w-full max-w-lg p-6">
             <h2 className="text-lg font-semibold mb-5">New Announcement</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div><label className="label">Title</label><input className="input" required value={form.title} onChange={e => setForm({...form, title: e.target.value})} /></div>
-              <div><label className="label">Message</label><textarea className="input" rows={5} required value={form.message} onChange={e => setForm({...form, message: e.target.value})} /></div>
+              <div>
+                <label className="label">Title</label>
+                <input className="input" required placeholder="e.g. End of Term Examination Notice" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
+              </div>
+              <div>
+                <label className="label">Message</label>
+                <textarea className="input" rows={5} required placeholder="Write your announcement here..." value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
+              </div>
               <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
                 <input type="checkbox" id="sms" checked={form.sendSMS} onChange={e => setForm({...form, sendSMS: e.target.checked})} className="w-4 h-4 accent-green-600" />
                 <label htmlFor="sms" className="text-sm text-green-800 font-medium cursor-pointer">
