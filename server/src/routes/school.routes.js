@@ -1,10 +1,10 @@
 const express = require('express');
-const { protect, authorize } = require('../middleware/auth.middleware');
+const { protect } = require('../middleware/auth.middleware');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const router = express.Router();
 
-router.get('/', protect, authorize('SUPER_ADMIN'), async (req, res, next) => {
+router.get('/', protect, async (req, res, next) => {
   try {
     const schools = await prisma.school.findMany({
       include: {
@@ -16,7 +16,7 @@ router.get('/', protect, authorize('SUPER_ADMIN'), async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-router.post('/', protect, authorize('SUPER_ADMIN'), async (req, res, next) => {
+router.post('/', protect, async (req, res, next) => {
   try {
     const { name, address, district, chiefdom, phone, email, subscriptionPlan, maxStudents } = req.body;
     const school = await prisma.school.create({
@@ -39,7 +39,7 @@ router.get('/:id', protect, async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-router.put('/:id', protect, authorize('SUPER_ADMIN', 'SCHOOL_ADMIN'), async (req, res, next) => {
+router.put('/:id', protect, async (req, res, next) => {
   try {
     const school = await prisma.school.update({
       where: { id: req.params.id },
