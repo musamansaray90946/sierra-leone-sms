@@ -41,6 +41,7 @@ enum FeeStatus {
 }
 
 enum SubscriptionPlan {
+  TRIAL
   BASIC
   STANDARD
   PREMIUM
@@ -57,7 +58,7 @@ model User {
   email     String   @unique
   password  String
   role      Role     @default(STUDENT)
-  uniqueId  String   @unique @default(cuid())
+  uniqueId  String?  @unique
   photoUrl  String?
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
