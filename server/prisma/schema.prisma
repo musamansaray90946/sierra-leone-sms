@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Term {
+  FIRST
+  SECOND
+  THIRD
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum FeeStatus {
+  PAID
+  UNPAID
+  PARTIAL
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher   Teacher?
+  student   Student?
+  parent    Parent?
+}
+
+model School {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  district  String
+  chiefdom  String?
+  phone     String?
+  email     String?
+  principal String?
+  createdAt DateTime @default(now())
+
+  classes   Class[]
+  teachers  Teacher[]
+  students  Student[]
+}
+
+model AcademicYear {
+  id        String   @id @default(cuid())
+  year      String   @unique
+  isCurrent Boolean  @default(false)
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+
+  classes     Class[]
+  fees        Fee[]
+  exams       Exam[]
+  attendances Attendance[]
+}
+
+model Class {
+  id           String   @id @default(cuid())
+  name         String
+  level        String
+  stream       String?
+  schoolId     String
+  academicYearId String
+  createdAt    DateTime @default(now())
+
+  school       School       @relation(fields: [schoolId], references: [id])
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
+  students     Student[]
+  teachers     ClassTeacher[]
+  subjects     Subject[]
+  attendances  Attendance[]
+  exams        Exam[]
+}
+
+model Subject {
+  id      String @id @default(cuid())
+  name    String
+  code    String
+  classId String
+
+  class       Class        @relation(fields: [classId], references: [id])
+  teachers    ClassTeacher[]
+  examResults ExamResult[]
+}
+
+model Teacher {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  schoolId    String
+  firstName   String
+  lastName    String
+  gender      Gender
+  phone       String?
+  address     String?
+  qualification String?
+  dateJoined  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  user    User           @relation(fields: [userId], references: [id])
+  school  School         @relation(fields: [schoolId], references: [id])
+  classes ClassTeacher[]
+}
+
+model ClassTeacher {
+  id        String  @id @default(cuid())
+  classId   String
+  teacherId String
+  subjectId String?
+  isClassTeacher Boolean @default(false)
+
+  class   Class    @relation(fields: [classId], references: [id])
+  teacher Teacher  @relation(fields: [teacherId], references: [id])
+  subject Subject? @relation(fields: [subjectId], references: [id])
+
+  @@unique([classId, teacherId, subjectId])
+}
+
+model Student {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  schoolId     String
+  classId      String
+  firstName    String
+  lastName     String
+  gender       Gender
+  dateOfBirth  DateTime
+  address      String?
+  district     String?
+  phone        String?
+  parentId     String?
+  admissionNo  String   @unique
+  createdAt    DateTime @default(now())
+
+  user        User         @relation(fields: [userId], references: [id])
+  school      School       @relation(fields: [schoolId], references: [id])
+  class       Class        @relation(fields: [classId], references: [id])
+  parent      Parent?      @relation(fields: [parentId], references: [id])
+  attendances Attendance[]
+  examResults ExamResult[]
+  fees        Fee[]
+}
+
+model Parent {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  firstName String
+  lastName  String
+  phone     String
+  address   String?
+  createdAt DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id])
+  students Student[]
+}
+
+model Attendance {
+  id             String           @id @default(cuid())
+  studentId      String
+  classId        String
+  academicYearId String
+  date           DateTime
+  term           Term
+  status         AttendanceStatus @default(PRESENT)
+  remarks        String?
+  createdAt      DateTime         @default(now())
+
+  student      Student      @relation(fields: [studentId], references: [id])
+  class        Class        @relation(fields: [classId], references: [id])
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
+
+  @@unique([studentId, date])
+}
+
+model Exam {
+  id             String   @id @default(cuid())
+  name           String
+  term           Term
+  classId        String
+  academicYearId String
+  startDate      DateTime
+  endDate        DateTime
+  createdAt      DateTime @default(now())
+
+  class        Class        @relation(fields: [classId], references: [id])
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
+  results      ExamResult[]
+}
+
+model ExamResult {
+  id        String  @id @default(cuid())
+  examId    String
+  studentId String
+  subjectId String
+  score     Float
+  grade     String
+  remarks   String?
+  createdAt DateTime @default(now())
+
+  exam    Exam    @relation(fields: [examId], references: [id])
+  student Student @relation(fields: [studentId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  @@unique([examId, studentId, subjectId])
+}
+
+model Fee {
+  id             String    @id @default(cuid())
+  studentId      String
+  academicYearId String
+  term           Term
+  amount         Float
+  amountPaid     Float     @default(0)
+  status         FeeStatus @default(UNPAID)
+  dueDate        DateTime
+  paidDate       DateTime?
+  description    String?
+  createdAt      DateTime  @default(now())
+
+  student      Student      @relation(fields: [studentId], references: [id])
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
+}
