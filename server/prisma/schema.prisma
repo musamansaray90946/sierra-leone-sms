@@ -8,7 +8,9 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
+  SUPER_ADMIN
+  SCHOOL_ADMIN
+  PRINCIPAL
   TEACHER
   STUDENT
   PARENT
@@ -29,6 +31,7 @@ enum AttendanceStatus {
   PRESENT
   ABSENT
   LATE
+  EXCUSED
 }
 
 enum FeeStatus {
@@ -37,33 +40,57 @@ enum FeeStatus {
   PARTIAL
 }
 
+enum SubscriptionPlan {
+  BASIC
+  STANDARD
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  TRIAL
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
   role      Role     @default(STUDENT)
+  uniqueId  String   @unique @default(cuid())
+  photoUrl  String?
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   teacher   Teacher?
   student   Student?
   parent    Parent?
+  principal Principal?
 }
 
 model School {
-  id        String   @id @default(cuid())
-  name      String
-  address   String
-  district  String
-  chiefdom  String?
-  phone     String?
-  email     String?
-  principal String?
-  createdAt DateTime @default(now())
+  id               String             @id @default(cuid())
+  name             String
+  address          String
+  district         String
+  chiefdom         String?
+  phone            String?
+  email            String?
+  logoUrl          String?
+  website          String?
+  subscriptionPlan SubscriptionPlan   @default(TRIAL)
+  subscriptionStatus SubscriptionStatus @default(TRIAL)
+  subscriptionExpiry DateTime?
+  maxStudents      Int                @default(200)
+  createdAt        DateTime           @default(now())
 
   classes   Class[]
   teachers  Teacher[]
   students  Student[]
+  principals Principal[]
+  fees      Fee[]
+  announcements Announcement[]
 }
 
 model AcademicYear {
@@ -74,20 +101,36 @@ model AcademicYear {
   endDate   DateTime
   createdAt DateTime @default(now())
 
-  classes     Class[]
-  fees        Fee[]
-  exams       Exam[]
-  attendances Attendance[]
+  classes      Class[]
+  fees         Fee[]
+  exams        Exam[]
+  attendances  Attendance[]
+}
+
+model Principal {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  schoolId   String
+  firstName  String
+  lastName   String
+  gender     Gender
+  phone      String?
+  bio        String?
+  createdAt  DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  school School @relation(fields: [schoolId], references: [id])
+  announcements Announcement[]
 }
 
 model Class {
-  id           String   @id @default(cuid())
-  name         String
-  level        String
-  stream       String?
-  schoolId     String
+  id             String   @id @default(cuid())
+  name           String
+  level          String
+  stream         String?
+  schoolId       String
   academicYearId String
-  createdAt    DateTime @default(now())
+  createdAt      DateTime @default(now())
 
   school       School       @relation(fields: [schoolId], references: [id])
   academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
@@ -107,31 +150,37 @@ model Subject {
   class       Class        @relation(fields: [classId], references: [id])
   teachers    ClassTeacher[]
   examResults ExamResult[]
+  lessonNotes LessonNote[]
+  assignments Assignment[]
 }
 
 model Teacher {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  schoolId    String
-  firstName   String
-  lastName    String
-  gender      Gender
-  phone       String?
-  address     String?
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  schoolId      String
+  firstName     String
+  lastName      String
+  gender        Gender
+  phone         String?
+  address       String?
   qualification String?
-  dateJoined  DateTime @default(now())
-  createdAt   DateTime @default(now())
+  bio           String?
+  staffId       String?
+  dateJoined    DateTime @default(now())
+  createdAt     DateTime @default(now())
 
   user    User           @relation(fields: [userId], references: [id])
   school  School         @relation(fields: [schoolId], references: [id])
   classes ClassTeacher[]
+  lessonNotes LessonNote[]
+  assignments Assignment[]
 }
 
 model ClassTeacher {
-  id        String  @id @default(cuid())
-  classId   String
-  teacherId String
-  subjectId String?
+  id             String  @id @default(cuid())
+  classId        String
+  teacherId      String
+  subjectId      String?
   isClassTeacher Boolean @default(false)
 
   class   Class    @relation(fields: [classId], references: [id])
@@ -142,20 +191,24 @@ model ClassTeacher {
 }
 
 model Student {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  schoolId     String
-  classId      String
-  firstName    String
-  lastName     String
-  gender       Gender
-  dateOfBirth  DateTime
-  address      String?
-  district     String?
-  phone        String?
-  parentId     String?
-  admissionNo  String   @unique
-  createdAt    DateTime @default(now())
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  schoolId    String
+  classId     String
+  firstName   String
+  lastName    String
+  gender      Gender
+  dateOfBirth DateTime
+  address     String?
+  district    String?
+  phone       String?
+  parentId    String?
+  admissionNo String   @unique
+  bio         String?
+  bloodGroup  String?
+  religion    String?
+  nationality String   @default("Sierra Leonean")
+  createdAt   DateTime @default(now())
 
   user        User         @relation(fields: [userId], references: [id])
   school      School       @relation(fields: [schoolId], references: [id])
@@ -164,16 +217,19 @@ model Student {
   attendances Attendance[]
   examResults ExamResult[]
   fees        Fee[]
+  submissions Submission[]
 }
 
 model Parent {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  firstName String
-  lastName  String
-  phone     String
-  address   String?
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  firstName    String
+  lastName     String
+  phone        String
+  address      String?
+  occupation   String?
+  relationship String?
+  createdAt    DateTime @default(now())
 
   user     User      @relation(fields: [userId], references: [id])
   students Student[]
@@ -229,9 +285,71 @@ model ExamResult {
   @@unique([examId, studentId, subjectId])
 }
 
+model LessonNote {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  fileUrl     String?
+  subjectId   String
+  teacherId   String
+  term        Term
+  week        Int?
+  createdAt   DateTime @default(now())
+
+  subject Subject @relation(fields: [subjectId], references: [id])
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  fileUrl     String?
+  dueDate     DateTime
+  subjectId   String
+  teacherId   String
+  term        Term
+  maxScore    Float    @default(100)
+  createdAt   DateTime @default(now())
+
+  subject     Subject      @relation(fields: [subjectId], references: [id])
+  teacher     Teacher      @relation(fields: [teacherId], references: [id])
+  submissions Submission[]
+}
+
+model Submission {
+  id           String   @id @default(cuid())
+  assignmentId String
+  studentId    String
+  fileUrl      String?
+  remarks      String?
+  score        Float?
+  submittedAt  DateTime @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    Student    @relation(fields: [studentId], references: [id])
+
+  @@unique([assignmentId, studentId])
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  message     String
+  schoolId    String
+  principalId String?
+  sendSMS     Boolean  @default(false)
+  targetRole  Role?
+  createdAt   DateTime @default(now())
+
+  school    School     @relation(fields: [schoolId], references: [id])
+  principal Principal? @relation(fields: [principalId], references: [id])
+}
+
 model Fee {
   id             String    @id @default(cuid())
   studentId      String
+  schoolId       String
   academicYearId String
   term           Term
   amount         Float
@@ -240,8 +358,10 @@ model Fee {
   dueDate        DateTime
   paidDate       DateTime?
   description    String?
+  receiptNo      String?
   createdAt      DateTime  @default(now())
 
   student      Student      @relation(fields: [studentId], references: [id])
+  school       School       @relation(fields: [schoolId], references: [id])
   academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
 }

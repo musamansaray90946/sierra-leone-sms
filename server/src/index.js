@@ -11,6 +11,11 @@ const classRoutes = require('./routes/class.routes');
 const attendanceRoutes = require('./routes/attendance.routes');
 const examRoutes = require('./routes/exam.routes');
 const feeRoutes = require('./routes/fee.routes');
+const schoolRoutes = require('./routes/school.routes');
+const uploadRoutes = require('./routes/upload.routes');
+const announcementRoutes = require('./routes/announcement.routes');
+const lessonRoutes = require('./routes/lesson.routes');
+const assignmentRoutes = require('./routes/assignment.routes');
 const { errorHandler } = require('./middleware/error.middleware');
 
 const app = express();
@@ -26,11 +31,17 @@ app.use(cors({
   ],
   credentials: true
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Sierra Leone SMS API is running' });
+  res.json({
+    status: 'ok',
+    message: 'EduManage SL API is running',
+    developer: 'Musa Mansaray',
+    version: '2.0.0'
+  });
 });
 
 app.use('/api/auth', authRoutes);
@@ -40,10 +51,16 @@ app.use('/api/classes', classRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/fees', feeRoutes);
+app.use('/api/schools', schoolRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/api/announcements', announcementRoutes);
+app.use('/api/lessons', lessonRoutes);
+app.use('/api/assignments', assignmentRoutes);
 
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`EduManage SL API running on port ${PORT}`);
+  console.log(`Developer: Musa Mansaray`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
 });
