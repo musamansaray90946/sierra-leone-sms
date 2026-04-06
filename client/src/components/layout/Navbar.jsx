@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, school, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -16,8 +16,12 @@ export default function Navbar() {
   return (
     <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between flex-shrink-0">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Bo Government Secondary School</h2>
-        <p className="text-xs text-gray-500">Sierra Leone · Bo District · EduManage SL</p>
+        <h2 className="text-lg font-semibold text-gray-900">
+          {school?.name || 'EduManage SL'}
+        </h2>
+        <p className="text-xs text-gray-500">
+          {school ? `${school.district} District · Sierra Leone · EduManage SL` : 'Sierra Leone · EduManage SL'}
+        </p>
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">

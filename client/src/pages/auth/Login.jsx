@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { School, Eye, EyeOff } from 'lucide-react';
+import { School, Eye, EyeOff, User, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { authAPI } from '../../services/api';
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [loginType, setLoginType] = useState('staff');
+  const [form, setForm] = useState({ email: '', password: '', admissionNo: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -15,9 +17,18 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      await login(form.email, form.password);
-      toast.success('Welcome to EduManage SL!');
-      navigate('/dashboard');
+      if (loginType === 'student') {
+        const res = await authAPI.loginStudent({ admissionNo: form.admissionNo, password: form.password });
+        const { token, user } = res.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        if (res.data.school) localStorage.setItem('school', JSON.stringify(res.data.school));
+        window.location.href = '/dashboard';
+      } else {
+        await login(form.email, form.password);
+        toast.success('Welcome to EduManage SL!');
+        navigate('/dashboard');
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
     } finally {
@@ -28,7 +39,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-900 via-primary-800 to-sierra-green flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <School className="w-9 h-9 text-white" />
           </div>
@@ -37,18 +48,51 @@ export default function Login() {
           <p className="text-xs text-gray-400 mt-1">by Musa Mansaray</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="label">Email Address</label>
-            <input
-              type="email"
-              className="input"
-              placeholder="your@email.com"
-              value={form.email}
-              onChange={e => setForm({ ...form, email: e.target.value })}
-              required
-            />
-          </div>
+        <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl">
+          <button
+            onClick={() => setLoginType('staff')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              loginType === 'staff' ? 'bg-white text-primary-700 shadow-sm' : 'text-gray-500'
+            }`}
+          >
+            <Shield className="w-4 h-4" /> Staff / Admin
+          </button>
+          <button
+            onClick={() => setLoginType('student')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              loginType === 'student' ? 'bg-white text-primary-700 shadow-sm' : 'text-gray-500'
+            }`}
+          >
+            <User className="w-4 h-4" /> Student
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {loginType === 'staff' ? (
+            <div>
+              <label className="label">Email Address</label>
+              <input
+                type="email"
+                className="input"
+                placeholder="your@email.com"
+                value={form.email}
+                onChange={e => setForm({ ...form, email: e.target.value })}
+                required
+              />
+            </div>
+          ) : (
+            <div>
+              <label className="label">Admission Number</label>
+              <input
+                className="input"
+                placeholder="e.g. SL260001"
+                value={form.admissionNo}
+                onChange={e => setForm({ ...form, admissionNo: e.target.value })}
+                required
+              />
+            </div>
+          )}
+
           <div>
             <label className="label">Password</label>
             <div className="relative">
@@ -79,10 +123,10 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+        <div className="mt-5 p-4 bg-gray-50 rounded-lg">
           <p className="text-xs text-gray-500 font-medium mb-2">Demo credentials:</p>
-          <p className="text-xs text-gray-600">Email: admin@sierraleone-sms.com</p>
-          <p className="text-xs text-gray-600">Password: admin123</p>
+          <p className="text-xs text-gray-600">Admin — admin@sierraleone-sms.com / admin123</p>
+          <p className="text-xs text-gray-600">Student — Use admission number / student123</p>
         </div>
       </div>
     </div>

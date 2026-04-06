@@ -44,30 +44,43 @@ const login = async (req, res, next) => {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+
     let profile = null;
+    let school = null;
+
     if (user.role === 'TEACHER') {
       profile = await prisma.teacher.findUnique({
         where: { userId: user.id },
         include: { school: true }
       });
+      school = profile?.school;
     } else if (user.role === 'STUDENT') {
       profile = await prisma.student.findUnique({
         where: { userId: user.id },
         include: { school: true, class: true }
       });
+      school = profile?.school;
+    } else if (['ADMIN', 'SUPER_ADMIN', 'SCHOOL_ADMIN'].includes(user.role)) {
+      const schools = await prisma.school.findMany({ take: 1 });
+      school = schools[0] || null;
     }
+
     const token = generateToken(user.id, user.role);
+
     res.json({
       success: true,
       token,
-      user: { id: user.id, email: user.email, role: user.role, profile }
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        profile,
+        school
+      }
     });
   } catch (error) {
     next(error);
@@ -86,4 +99,43 @@ const getMe = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, getMe };
+const loginByAdmissionNo = async (req, res, next) => {
+  try {
+    const { admissionNo, password } = req.body;
+    if (!admissionNo || !password) {
+      return res.status(400).json({ message: 'Please provide admission number and password' });
+    }
+
+    const student = await prisma.student.findUnique({
+      where: { admissionNo },
+      include: { user: true, school: true, class: true }
+    });
+
+    if (!student) {
+      return res.status(401).json({ message: 'Invalid admission number or password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, student.user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid admission number or password' });
+    }
+
+    const token = generateToken(student.user.id, student.user.role);
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: student.user.id,
+        email: student.user.email,
+        role: student.user.role,
+        profile: student,
+        school: student.school
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { register, login, loginByAdmissionNo, getMe };
