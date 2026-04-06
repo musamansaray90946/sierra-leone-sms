@@ -7,11 +7,20 @@ import toast from 'react-hot-toast';
 export default function Announcements() {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
+  const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: '', message: '', schoolId: 'school-001', sendSMS: false });
+  const [form, setForm] = useState({ title: '', message: '', schoolId: '', sendSMS: false });
 
-  useEffect(() => { fetchAnnouncements(); }, []);
+  useEffect(() => {
+    fetchAnnouncements();
+    API.get('/schools').then(res => {
+      setSchools(res.data.data);
+      if (res.data.data.length > 0) {
+        setForm(f => ({ ...f, schoolId: res.data.data[0].id }));
+      }
+    }).catch(() => {});
+  }, []);
 
   const fetchAnnouncements = async () => {
     try {
@@ -23,11 +32,12 @@ export default function Announcements() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.schoolId) return toast.error('No school found');
     try {
       await API.post('/announcements', form);
       toast.success(form.sendSMS ? 'Announcement sent + SMS to parents!' : 'Announcement published!');
       setShowForm(false);
-      setForm({ title: '', message: '', schoolId: 'school-001', sendSMS: false });
+      setForm(f => ({ ...f, title: '', message: '', sendSMS: false }));
       fetchAnnouncements();
     } catch (err) { toast.error(err.response?.data?.message || 'Failed'); }
   };
@@ -89,6 +99,14 @@ export default function Announcements() {
           <div className="bg-white rounded-2xl w-full max-w-lg p-6">
             <h2 className="text-lg font-semibold mb-5">New Announcement</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {schools.length > 1 && (
+                <div>
+                  <label className="label">School</label>
+                  <select className="input" value={form.schoolId} onChange={e => setForm({...form, schoolId: e.target.value})}>
+                    {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+              )}
               <div>
                 <label className="label">Title</label>
                 <input className="input" required placeholder="e.g. End of Term Examination Notice" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />

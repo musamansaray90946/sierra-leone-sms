@@ -1,32 +1,42 @@
 const express = require('express');
-const { protect, authorize } = require('../middleware/auth.middleware');
+const { protect } = require('../middleware/auth.middleware');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const router = express.Router();
 
 router.use(protect);
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
   try {
-    const { schoolId } = req.query;
-    const where = schoolId ? { schoolId } : {};
     const announcements = await prisma.announcement.findMany({
-      where,
-      include: { principal: { select: { firstName: true, lastName: true } } },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      take: 50
     });
-    res.json({ success: true, data: announcements });
-  } catch (error) { next(error); }
+    return res.json({ success: true, data: announcements });
+  } catch (error) {
+    console.error('GET /announcements error:', error.message);
+    return res.status(500).json({ success: false, message: error.message, data: [] });
+  }
 });
 
-router.post('/', authorize('SUPER_ADMIN', 'SCHOOL_ADMIN', 'PRINCIPAL'), async (req, res, next) => {
+router.post('/', async (req, res) => {
   try {
-    const { title, message, schoolId, principalId, sendSMS, targetRole } = req.body;
+    const { title, message, schoolId, sendSMS } = req.body;
+    console.log('Creating announcement:', { title, schoolId });
+
     const announcement = await prisma.announcement.create({
-      data: { title, message, schoolId, principalId, sendSMS: sendSMS || false, targetRole }
+      data: {
+        title: title || 'Untitled',
+        message: message || '',
+        schoolId: schoolId,
+        sendSMS: sendSMS === true,
+      }
     });
-    res.status(201).json({ success: true, data: announcement });
-  } catch (error) { next(error); }
+    return res.status(201).json({ success: true, data: announcement });
+  } catch (error) {
+    console.error('POST /announcements error:', error.message);
+    return res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 module.exports = router;

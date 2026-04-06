@@ -1,17 +1,20 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
-
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding Sierra Leone SMS database...');
+  console.log('Seeding EduManage SL database...');
 
   const hashedPassword = await bcrypt.hash('admin123', 12);
 
-  const adminUser = await prisma.user.upsert({
-  where: { email: 'admin@sierraleone-sms.com' },
-  update: { role: 'SUPER_ADMIN' },
-  create: { email: 'admin@sierraleone-sms.com', password: hashedPassword, role: 'SUPER_ADMIN' }
+  await prisma.user.upsert({
+    where: { email: 'admin@sierraleone-sms.com' },
+    update: { role: 'ADMIN' },
+    create: {
+      email: 'admin@sierraleone-sms.com',
+      password: hashedPassword,
+      role: 'ADMIN'
+    }
   });
 
   const school = await prisma.school.upsert({
@@ -25,7 +28,9 @@ async function main() {
       chiefdom: 'Kakua',
       phone: '+232 76 000001',
       email: 'bo.gov.sec@education.gov.sl',
-      principal: 'Mr. Ibrahim Koroma'
+      subscriptionPlan: 'STANDARD',
+      subscriptionStatus: 'ACTIVE',
+      maxStudents: 500
     }
   });
 
@@ -40,7 +45,7 @@ async function main() {
     }
   });
 
-  const jss1 = await prisma.class.create({
+  await prisma.class.create({
     data: {
       name: 'JSS 1A',
       level: 'JSS1',
@@ -48,10 +53,10 @@ async function main() {
       schoolId: school.id,
       academicYearId: academicYear.id
     }
-  });
+  }).catch(() => console.log('Class already exists'));
 
   console.log('✅ Seed complete!');
-  console.log('Admin login: admin@sierraleone-sms.com / admin123');
+  console.log('Login: admin@sierraleone-sms.com / admin123');
 }
 
 main()
