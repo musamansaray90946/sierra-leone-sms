@@ -2,8 +2,8 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, Users, GraduationCap, BookOpen,
-  ClipboardList, FileText, CreditCard, School,
-  Megaphone, BookMarked, PenTool, Building, User
+ClipboardList, FileText, CreditCard, School,
+Megaphone, BookMarked, PenTool, Building, User, Printer
 } from 'lucide-react';
 
 const allNavItems = [
@@ -18,6 +18,8 @@ const allNavItems = [
   { to: '/dashboard/exams', icon: FileText, label: 'Exams & Results', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT'] },
   { to: '/dashboard/fees', icon: CreditCard, label: 'Fees (SLL)', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','PARENT'] },
   { to: '/dashboard/announcements', icon: Megaphone, label: 'Announcements', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT','PARENT'] },
+  { to: '/dashboard/print/attendance', icon: Printer, label: 'Print Attendance', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER'] },
+{ to: '/dashboard/print/fees', icon: Printer, label: 'Print Fee Receipts', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL'] },
   { to: '/dashboard/profile', icon: User, label: 'My Profile', exact: false, roles: ['SUPER_ADMIN','ADMIN','SCHOOL_ADMIN','PRINCIPAL','TEACHER','STUDENT','PARENT'] },
 ];
 

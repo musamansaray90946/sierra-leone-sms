@@ -16,6 +16,8 @@ import Assignments from './pages/assignments/Assignments';
 import Announcements from './pages/announcements/Announcements';
 import Schools from './pages/schools/Schools';
 import Profile from './pages/profile/Profile';
+import PrintAttendance from './pages/print/PrintAttendance';
+import PrintFeeReceipt from './pages/print/PrintFeeReceipt';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -53,6 +55,8 @@ const AppRoutes = () => {
         <Route path="announcements" element={<Announcements />} />
         <Route path="schools" element={<Schools />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="print/attendance" element={<PrintAttendance />} />
+<Route path="print/fees" element={<PrintFeeReceipt />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
