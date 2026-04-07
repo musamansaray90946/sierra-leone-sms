@@ -16,6 +16,7 @@ const uploadRoutes = require('./routes/upload.routes');
 const announcementRoutes = require('./routes/announcement.routes');
 const lessonRoutes = require('./routes/lesson.routes');
 const assignmentRoutes = require('./routes/assignment.routes');
+const passwordRoutes = require('./routes/password.routes');
 const { errorHandler } = require('./middleware/error.middleware');
 
 const app = express();
@@ -56,6 +57,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/assignments', assignmentRoutes);
+app.use('/api/password', passwordRoutes);
 
 app.use(errorHandler);
 
