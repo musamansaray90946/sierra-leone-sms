@@ -7,7 +7,7 @@ const features = [
   { icon: FileText, title: 'Exam results & report cards', desc: 'Auto-generate SL-format report cards as PDF' },
   { icon: CreditCard, title: 'Fee management (SLL)', desc: 'Track fees in Sierra Leonean Leones with receipts' },
   { icon: MessageSquare, title: 'SMS to parents', desc: 'Principal sends SMS alerts directly to parents & guardians' },
-  { icon: Globe, title: 'Works for any SL school', desc: 'All 16 districts, NPSE · BECE · WASSCE curriculum' },
+ { icon: Globe, title: 'Works for any SL school', desc: 'Bo, Freetown, Kenema, Makeni, Lunsar, Koidu, Moyamba & all 16 districts' },
 ];
 
 const plans = [
@@ -48,7 +48,7 @@ export default function Landing() {
             The complete school management system for Sierra Leone
           </h1>
           <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-            Manage students, teachers, exams, fees, attendance and communicate with parents — all in one place. Works for every school from Bo to Freetown.
+            Manage students, teachers, exams, fees, attendance and communicate with parents — all in one place. Works for every school across all 16 districts — Bo, Freetown, Kenema, Makeni, Koidu, Lunsar, Moyamba, Bonthe and beyond.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={() => navigate('/login')} className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors">
@@ -93,8 +93,8 @@ export default function Landing() {
                 <div className="flex items-center gap-2 text-gray-600 text-sm mb-6">
                   <CheckCircle className="w-4 h-4 text-green-500" />
                   {students}
-                </div>
-                <a href="mailto:mmans.sl.001@gmail.com" className="block text-center btn-primary w-full">Get this plan</a>
+                <a href="mailto:mmans.sl.001@gmail.com?subject=EduManage SL - Basic Plan Enquiry&body=Hello Musa, I am interested in the Basic Plan (SLL 500K per term) for my school." className="block text-center btn-primary w-full">Get this plan</a>
+                
               </div>
             ))}
           </div>
