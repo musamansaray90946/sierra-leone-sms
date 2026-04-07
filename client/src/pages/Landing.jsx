@@ -7,13 +7,13 @@ const features = [
   { icon: FileText, title: 'Exam results & report cards', desc: 'Auto-generate SL-format report cards as PDF' },
   { icon: CreditCard, title: 'Fee management (SLL)', desc: 'Track fees in Sierra Leonean Leones with receipts' },
   { icon: MessageSquare, title: 'SMS to parents', desc: 'Principal sends SMS alerts directly to parents & guardians' },
- { icon: Globe, title: 'Works for any SL school', desc: 'Bo, Freetown, Kenema, Makeni, Lunsar, Koidu, Moyamba & all 16 districts' },
+  { icon: Globe, title: 'Works for any SL school', desc: 'Bo, Freetown, Kenema, Makeni, Lunsar, Koidu, Moyamba & all 16 districts' },
 ];
 
 const plans = [
-  { name: 'Basic', price: 'SLL 500K', period: 'per term', students: 'Up to 200 students', color: 'border-gray-200 bg-white', badge: '' },
-  { name: 'Standard', price: 'SLL 1.2M', period: 'per term', students: 'Up to 500 students', color: 'border-primary-500 bg-primary-50', badge: 'Most Popular' },
-  { name: 'Premium', price: 'SLL 2.5M', period: 'per term', students: 'Unlimited + SMS alerts', color: 'border-purple-400 bg-purple-50', badge: '' },
+  { name: 'Basic', price: 'SLL 500K', period: 'per term', students: 'Up to 200 students', color: 'border-gray-200 bg-white', badge: '', subject: 'Basic Plan Enquiry', body: 'Hello Musa, I am interested in the Basic Plan (SLL 500K per term) for my school.' },
+  { name: 'Standard', price: 'SLL 1.2M', period: 'per term', students: 'Up to 500 students', color: 'border-primary-500 bg-primary-50', badge: 'Most Popular', subject: 'Standard Plan Enquiry', body: 'Hello Musa, I am interested in the Standard Plan (SLL 1.2M per term) for my school.' },
+  { name: 'Premium', price: 'SLL 2.5M', period: 'per term', students: 'Unlimited + SMS alerts', color: 'border-purple-400 bg-purple-50', badge: '', subject: 'Premium Plan Enquiry', body: 'Hello Musa, I am interested in the Premium Plan (SLL 2.5M per term) for my school.' },
 ];
 
 export default function Landing() {
@@ -48,7 +48,7 @@ export default function Landing() {
             The complete school management system for Sierra Leone
           </h1>
           <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-            Manage students, teachers, exams, fees, attendance and communicate with parents — all in one place. Works for every school across all 16 districts — Bo, Freetown, Kenema, Makeni, Koidu, Lunsar, Moyamba, Bonthe and beyond.
+            Manage students, teachers, exams, fees, attendance and communicate with parents — all in one place. Works for every school across Sierra Leone — from Lunsar to Koidu, Bo to Freetown, Kenema to Makeni.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={() => navigate('/login')} className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors">
@@ -84,7 +84,7 @@ export default function Landing() {
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">Simple, transparent pricing</h2>
           <p className="text-gray-500 text-center mb-12">Contact the developer to get your school set up. All prices in Sierra Leonean Leones.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {plans.map(({ name, price, period, students, color, badge }) => (
+            {plans.map(({ name, price, period, students, color, badge, subject, body }) => (
               <div key={name} className={`rounded-xl p-6 border-2 ${color} relative`}>
                 {badge && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-600 text-white text-xs px-3 py-1 rounded-full">{badge}</span>}
                 <h3 className="font-bold text-lg text-gray-900 mb-1">{name}</h3>
@@ -93,8 +93,13 @@ export default function Landing() {
                 <div className="flex items-center gap-2 text-gray-600 text-sm mb-6">
                   <CheckCircle className="w-4 h-4 text-green-500" />
                   {students}
-                <a href="mailto:mmans.sl.001@gmail.com?subject=EduManage SL - Basic Plan Enquiry&body=Hello Musa, I am interested in the Basic Plan (SLL 500K per term) for my school." className="block text-center btn-primary w-full">Get this plan</a>
+                </div>
                 
+                  href={`mailto:mmans.sl.001@gmail.com?subject=EduManage SL - ${subject}&body=${body}`}
+                  className="block text-center btn-primary w-full"
+                >
+                  Get this plan
+                </a>
               </div>
             ))}
           </div>

@@ -18,6 +18,7 @@ import Schools from './pages/schools/Schools';
 import Profile from './pages/profile/Profile';
 import PrintAttendance from './pages/print/PrintAttendance';
 import PrintFeeReceipt from './pages/print/PrintFeeReceipt';
+import ParentDashboard from './pages/parent/ParentDashboard';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -44,19 +45,20 @@ const AppRoutes = () => {
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/dashboard" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
+        <Route path="schools" element={<Schools />} />
         <Route path="students" element={<Students />} />
         <Route path="teachers" element={<Teachers />} />
         <Route path="classes" element={<Classes />} />
         <Route path="attendance" element={<Attendance />} />
-        <Route path="exams" element={<Exams />} />
-        <Route path="fees" element={<Fees />} />
         <Route path="lessons" element={<Lessons />} />
         <Route path="assignments" element={<Assignments />} />
+        <Route path="exams" element={<Exams />} />
+        <Route path="fees" element={<Fees />} />
         <Route path="announcements" element={<Announcements />} />
-        <Route path="schools" element={<Schools />} />
-        <Route path="profile" element={<Profile />} />
         <Route path="print/attendance" element={<PrintAttendance />} />
-<Route path="print/fees" element={<PrintFeeReceipt />} />
+        <Route path="print/fees" element={<PrintFeeReceipt />} />
+        <Route path="parent" element={<ParentDashboard />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
