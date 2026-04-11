@@ -7,13 +7,19 @@ const features = [
   { icon: FileText, title: 'Exam results & report cards', desc: 'Auto-generate SL-format report cards as PDF' },
   { icon: CreditCard, title: 'Fee management (SLL)', desc: 'Track fees in Sierra Leonean Leones with receipts' },
   { icon: MessageSquare, title: 'SMS to parents', desc: 'Principal sends SMS alerts directly to parents & guardians' },
-  { icon: Globe, title: 'Works for any SL school', desc: 'Bo, Freetown, Kenema, Makeni, Lunsar, Koidu, Moyamba & all 16 districts' },
+  { icon: Globe, title: 'Works for any SL school', desc: 'Bo, Freetown, Kenema, Makeni, Lunsar, Koidu, Moyamba and all 16 districts' },
 ];
 
 const plans = [
-  { name: 'Basic', price: 'SLL 500K', period: 'per term', students: 'Up to 200 students', color: 'border-gray-200 bg-white', badge: '', subject: 'Basic Plan Enquiry', body: 'Hello Musa, I am interested in the Basic Plan (SLL 500K per term) for my school.' },
-  { name: 'Standard', price: 'SLL 1.2M', period: 'per term', students: 'Up to 500 students', color: 'border-primary-500 bg-primary-50', badge: 'Most Popular', subject: 'Standard Plan Enquiry', body: 'Hello Musa, I am interested in the Standard Plan (SLL 1.2M per term) for my school.' },
-  { name: 'Premium', price: 'SLL 2.5M', period: 'per term', students: 'Unlimited + SMS alerts', color: 'border-purple-400 bg-purple-50', badge: '', subject: 'Premium Plan Enquiry', body: 'Hello Musa, I am interested in the Premium Plan (SLL 2.5M per term) for my school.' },
+  { name: 'Basic', price: 'SLL 500K', period: 'per term', students: 'Up to 200 students', color: 'border-gray-200 bg-white', badge: '' },
+  { name: 'Standard', price: 'SLL 1.2M', period: 'per term', students: 'Up to 500 students', color: 'border-primary-500 bg-primary-50', badge: 'Most Popular' },
+  { name: 'Premium', price: 'SLL 2.5M', period: 'per term', students: 'Unlimited + SMS alerts', color: 'border-purple-400 bg-purple-50', badge: '' },
+];
+
+const emails = [
+  'mmans.sl.001@gmail.com?subject=EduManage SL Basic Plan&body=Hello Musa, I am interested in the Basic Plan.',
+  'mmans.sl.001@gmail.com?subject=EduManage SL Standard Plan&body=Hello Musa, I am interested in the Standard Plan.',
+  'mmans.sl.001@gmail.com?subject=EduManage SL Premium Plan&body=Hello Musa, I am interested in the Premium Plan.',
 ];
 
 export default function Landing() {
@@ -84,9 +90,13 @@ export default function Landing() {
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">Simple, transparent pricing</h2>
           <p className="text-gray-500 text-center mb-12">Contact the developer to get your school set up. All prices in Sierra Leonean Leones.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {plans.map(({ name, price, period, students, color, badge, subject, body }) => (
+            {plans.map(({ name, price, period, students, color, badge }, index) => (
               <div key={name} className={`rounded-xl p-6 border-2 ${color} relative`}>
-                {badge && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-600 text-white text-xs px-3 py-1 rounded-full">{badge}</span>}
+                {badge && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-600 text-white text-xs px-3 py-1 rounded-full">
+                    {badge}
+                  </span>
+                )}
                 <h3 className="font-bold text-lg text-gray-900 mb-1">{name}</h3>
                 <div className="text-3xl font-bold text-primary-600 mb-1">{price}</div>
                 <div className="text-gray-400 text-sm mb-4">{period}</div>
@@ -94,10 +104,7 @@ export default function Landing() {
                   <CheckCircle className="w-4 h-4 text-green-500" />
                   {students}
                 </div>
-                
-                  href={`mailto:mmans.sl.001@gmail.com?subject=EduManage SL - ${subject}&body=${body}`}
-                  className="block text-center btn-primary w-full"
-                >
+                <a href={'mailto:' + emails[index]} className="block text-center btn-primary w-full">
                   Get this plan
                 </a>
               </div>
@@ -119,7 +126,7 @@ export default function Landing() {
               </div>
             </div>
             <div className="text-center">
-              <p className="text-gray-300 text-sm">Designed & built by</p>
+              <p className="text-gray-300 text-sm">Designed and built by</p>
               <p className="font-bold text-white text-lg">Musa Mansaray</p>
               <p className="text-gray-400 text-xs">Full-Stack Developer · Sierra Leone</p>
             </div>
@@ -128,11 +135,13 @@ export default function Landing() {
               <a href="https://github.com/musamansaray90946" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
                 github.com/musamansaray90946
               </a>
-              <a href="https://musamansaray90946.github.io/portfolio-v2" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">Portfolio</a>
+              <a href="https://musamansaray90946.github.io/portfolio-v2" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+                Portfolio
+              </a>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500 text-xs">
-            © {new Date().getFullYear()} EduManage SL · All rights reserved · Built with React, Node.js & PostgreSQL
+            {new Date().getFullYear()} EduManage SL · All rights reserved · Built with React, Node.js and PostgreSQL
           </div>
         </div>
       </footer>
